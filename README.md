@@ -1,85 +1,128 @@
-
-# Lista principal que almacenará todas las ventas
 ventas = []
+next_id = 1
 
-# Función para crear una nueva venta
-def crear_venta():
-    id = input("Ingrese ID de la venta: ")
-    producto = input("Ingrese nombre del producto: ")
-    cantidad = int(input("Ingrese cantidad vendida: "))
-    precio_unitario = float(input("Ingrese precio unitario: "))
-    venta = [id, producto, cantidad, precio_unitario]
-    ventas.append(venta)
-    print("✅ Venta creada con éxito.\n")
-
-# Función para listar todas las ventas
-def listar_ventas():
-    if not ventas:
-        print("❌ No hay ventas registradas.\n")
-    else:
-        for v in ventas:
-            print(f"ID: {v[0]}, Producto: {v[1]}, Cantidad: {v[2]}, Precio: ${v[3]:.2f}")
-        print()
-
-# Función para buscar una venta por ID
-def buscar_por_id():
-    id_buscar = input("Ingrese el ID de la venta a buscar: ")
-    for v in ventas:
-        if v[0] == id_buscar:
-            print(f"✅ Venta encontrada: {v}\n")
-            return
-    print("❌ Venta no encontrada.\n")
-
-# Función para modificar una venta
-def modificar_venta():
-    id_modificar = input("Ingrese el ID de la venta a modificar: ")
-    for i in range(len(ventas)):
-        if ventas[i][0] == id_modificar:
-            print("Ingrese los nuevos datos:")
-            nuevo_producto = input("Nuevo producto: ")
-            nueva_cantidad = int(input("Nueva cantidad: "))
-            nuevo_precio = float(input("Nuevo precio unitario: "))
-            ventas[i] = [id_modificar, nuevo_producto, nueva_cantidad, nuevo_precio]
-            print("✅ Venta modificada.\n")
-            return
-    print("❌ Venta no encontrada.\n")
-
-# Función para eliminar una venta
-def eliminar_venta():
-    id_eliminar = input("Ingrese el ID de la venta a eliminar: ")
-    for i in range(len(ventas)):
-        if ventas[i][0] == id_eliminar:
-            del ventas[i]
-            print("✅ Venta eliminada.\n")
-            return
-    print("❌ Venta no encontrada.\n")
-
-# Función para calcular el ingreso total
-def calcular_totales():
-    total = 0
-    for v in ventas:
-        total += v[2] * v[3]  # cantidad * precio_unitario
-    print(f"💰 Ingreso total: ${total:.2f}\n")
-
-# Menú principal en bucle
-while True:
-    print("===== MENÚ DE VENTAS =====")
+def mostrar_menu():
+    print("\n--- MENÚ DE GESTIÓN DE VENTAS ---")
     print("1. Crear nueva venta")
-    print("2. Listar ventas")
-    print("3. Buscar por ID")
+    print("2. Listar todas las ventas")
+    print("3. Buscar venta por ID")
     print("4. Modificar venta")
     print("5. Eliminar venta")
-    print("6. Calcular ingreso total")
+    print("6. Calcular total de ingresos")
     print("7. Salir")
-    
-    opcion = input("Seleccione una opción (1-7): ")
+    return input("Seleccione una opción: ")
 
+def crear_venta():
+    global next_id, ventas
+    producto = input("Nombre del producto: ")
+    
+    try:
+        cantidad = int(input("Cantidad vendida: "))
+        precio = float(input("Precio unitario: "))
+    except ValueError:
+        print("Error: Cantidad y precio deben ser valores numéricos")
+        return
+    
+    nueva_venta = [next_id, producto, cantidad, precio]
+    ventas.append(nueva_venta)
+    print(f"Venta creada exitosamente! ID: {next_id}")
+    next_id += 1
+
+def listar_ventas():
+    if not ventas:
+        print("No hay ventas registradas")
+        return
+    
+    print("\n--- LISTADO DE VENTAS ---")
+    for venta in ventas:
+        print(f"ID: {venta[0]} | Producto: {venta[1]} | "
+              f"Cantidad: {venta[2]} | Precio: ${venta[3]:.2f} | "
+              f"Total: ${venta[2] * venta[3]:.2f}")
+
+def buscar_venta():
+    try:
+        id_buscar = int(input("ID de la venta a buscar: "))
+    except ValueError:
+        print("Error: El ID debe ser un número entero")
+        return
+    
+    for venta in ventas:
+        if venta[0] == id_buscar:
+            print("\n--- VENTA ENCONTRADA ---")
+            print(f"ID: {venta[0]}")
+            print(f"Producto: {venta[1]}")
+            print(f"Cantidad: {venta[2]}")
+            print(f"Precio unitario: ${venta[3]:.2f}")
+            print(f"Total: ${venta[2] * venta[3]:.2f}")
+            return
+    
+    print(f"No se encontró ninguna venta con ID: {id_buscar}")
+
+def modificar_venta():
+    try:
+        id_modificar = int(input("ID de la venta a modificar: "))
+    except ValueError:
+        print("Error: El ID debe ser un número entero")
+        return
+    
+    for venta in ventas:
+        if venta[0] == id_modificar:
+            print("\nVenta actual:")
+            print(f"1. Producto: {venta[1]}")
+            print(f"2. Cantidad: {venta[2]}")
+            print(f"3. Precio unitario: ${venta[3]:.2f}")
+            
+            try:
+                nuevo_producto = input("\nNuevo producto (Enter para mantener): ")
+                nueva_cantidad = input("Nueva cantidad (Enter para mantener): ")
+                nuevo_precio = input("Nuevo precio unitario (Enter para mantener): ")
+                
+                if nuevo_producto:
+                    venta[1] = nuevo_producto
+                if nueva_cantidad:
+                    venta[2] = int(nueva_cantidad)
+                if nuevo_precio:
+                    venta[3] = float(nuevo_precio)
+                
+                print("Venta modificada exitosamente!")
+                return
+            except ValueError:
+                print("Error: Cantidad y precio deben ser valores numéricos válidos")
+                return
+    
+    print(f"No se encontró ninguna venta con ID: {id_modificar}")
+
+def eliminar_venta():
+    try:
+        id_eliminar = int(input("ID de la venta a eliminar: "))
+    except ValueError:
+        print("Error: El ID debe ser un número entero")
+        return
+    
+    for i, venta in enumerate(ventas):
+        if venta[0] == id_eliminar:
+            ventas.pop(i)
+            print("Venta eliminada exitosamente!")
+            return
+    
+    print(f"No se encontró ninguna venta con ID: {id_eliminar}")
+
+def calcular_totales():
+    total_ingresos = sum(venta[2] * venta[3] for venta in ventas)
+    print(f"\n--- TOTAL DE INGRESOS ---")
+    print(f"Ingresos totales: ${total_ingresos:.2f}")
+    print(f"Cantidad de ventas registradas: {len(ventas)}")
+
+# Programa principal
+while True:
+    opcion = mostrar_menu()
+    
     if opcion == '1':
         crear_venta()
     elif opcion == '2':
         listar_ventas()
     elif opcion == '3':
-        buscar_por_id()
+        buscar_venta()
     elif opcion == '4':
         modificar_venta()
     elif opcion == '5':
@@ -87,7 +130,7 @@ while True:
     elif opcion == '6':
         calcular_totales()
     elif opcion == '7':
-        print("👋 Saliendo del programa. ¡Hasta luego!")
+        print("Saliendo del sistema...")
         break
     else:
-        print("❌ Opción inválida. Intente de nuevo.\n")
+        print("Opción no válida. Por favor seleccione 1-7")
